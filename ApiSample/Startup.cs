@@ -28,6 +28,7 @@ namespace ApiSample
         {
 
             services.AddControllers();
+            // OPEN API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiSample", Version = "v1" });
