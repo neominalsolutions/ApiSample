@@ -1,4 +1,7 @@
 ﻿using ApiSample.Dtos;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,12 +15,16 @@ namespace ApiSample.Controllers
     //[Route("api/[controller]/[action]/{id?}")]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    // Access Token ile kimlik doğrulamadan bu controller'a erişemeyiz. protected resource halinegelimiş oldu
     public class ProductsController : ControllerBase
     {
         [HttpGet("v2")]
         // attribute routing ile her bir route birbirinden ayırdık
         public List<ProductDto> GetProducts2()
         {
+           // saveToken yapınca accessToken uygulama genelinde erişebiliyoruz. HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme);
+
             return new List<ProductDto>();
         }
 

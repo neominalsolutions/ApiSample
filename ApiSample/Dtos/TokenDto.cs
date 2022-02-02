@@ -10,7 +10,7 @@ namespace ApiSample.Dtos
         /// <summary>
         /// 3600 saniye değerini döndürür
         /// </summary>
-        public static int GetExpireDate = (int)(DateTime.Now.AddHours(1) - DateTime.Now).TotalSeconds;
+        public static int GetExpireDateMinutes = 3600;
     }
 
     /// <summary>
@@ -20,8 +20,8 @@ namespace ApiSample.Dtos
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
-        public int ExpireDateSeconds { get; set; } = TokenExpireDateHelper.GetExpireDate; // expire date minutes kaç saniye sonra sonra expire olacağı bilgisi
-
+        public int ExpireDateSeconds { get; set; } = TokenExpireDateHelper.GetExpireDateMinutes; // expire date minutes kaç saniye sonra sonra expire olacağı bilgisi
+        public string TokenType { get; set; } = "Bearer";
 
     }
 }
