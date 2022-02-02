@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MvcClient.Consts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,17 @@ namespace MvcClient
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddHttpClient(HttpClientNames.ApiSample, opt =>
+            {
+                opt.BaseAddress = new Uri("https://localhost:5001");
+                // DefaultRequestHeaders üzerinden https://localhost:5001 sunucuna her istekde gönderilecek olan deðerler
+                opt.DefaultRequestHeaders.Add("User-Agent", "MVC App");
+                opt.DefaultRequestHeaders.Add("client_id", "client-mvc");
+                opt.DefaultRequestHeaders.Add("client_secret", "x-client");
+
+                // her istekde header eklenmesi gereken deðerler.
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

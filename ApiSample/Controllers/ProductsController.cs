@@ -15,7 +15,7 @@ namespace ApiSample.Controllers
     //[Route("api/[controller]/[action]/{id?}")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     // Access Token ile kimlik doğrulamadan bu controller'a erişemeyiz. protected resource halinegelimiş oldu
     public class ProductsController : ControllerBase
     {
