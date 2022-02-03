@@ -4,9 +4,11 @@ using MvcClient.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -48,16 +50,53 @@ namespace MvcClient.Controllers
 
                 var tokenResponse = JsonConvert.DeserializeObject<TokenViewModel>(content);
 
+                var handler = new JwtSecurityTokenHandler();
+                 var jwtToken =  handler.ReadJwtToken(tokenResponse.AccessToken);
+
+                int expireDateSeconds = (int)jwtToken.Payload.Exp;
+                // user hesabına ait hesap için geçerli claim bilgileri saklanır.
+                var claimPrinciple = new ClaimsPrincipal();
+
+                var identity = new ClaimsIdentity(jwtToken.Payload.Claims, "ExternalAuth");
+                claimPrinciple.AddIdentity(identity);
+
+                // kimlik doğrulanırken saklanacak olan değerler özellikler
+                // burada token, token süresi, token kalıcı olup olmaycağı gibi bilgiler saklarnır.
+                var authProperties = new AuthenticationProperties();
+                authProperties.IsPersistent = model.RememberMe;
+                authProperties.ExpiresUtc = DateTime.UtcNow.AddSeconds(expireDateSeconds);
+
+                var accessToken = new AuthenticationToken();
+                accessToken.Name = "AccessToken";
+                accessToken.Value = tokenResponse.AccessToken;
+
+                var refreshToken = new AuthenticationToken();
+                refreshToken.Name = "RefreshToken";
+                refreshToken.Value = tokenResponse.RefreshToken;
+
+                var tokens = new List<AuthenticationToken>();
+                tokens.Add(accessToken);
+                tokens.Add(refreshToken);
+
+                // uygulamada HttpContext üzerinde access ve refresh token saklayacağız ki httpcontext üzerinden bu token bilgilerine ulaşıp request atarken request header'a bu bilgileri gömeceğiz.
+
+                authProperties.StoreTokens(tokens);
+                // httpcontext üzerinde token sakladığımız method. Inmemory olarak saklar. Uygulama çalıştığı sürece saklanır. session bazlı tutar.
+                
+ 
+                await HttpContext.SignInAsync("ExternalAuth",claimPrinciple, authProperties);
+
+
                 // cookie oluşturma işlemleri yapmamız kullancıı HttpContext signIn yapmamız vs
                 // token Decode edip içindeki claim bilgilerini almamız vs lazım.
 
-               //var auth = await  HttpContext.AuthenticateAsync();
-               // auth.Properties.
+                //var auth = await  HttpContext.AuthenticateAsync();
+                // auth.Properties.
 
-               // HttpContext.SignInAsync(,,)
+                // HttpContext.SignInAsync(,,)
             }
 
-            return View();
+            return Redirect("/");
 
 
         }

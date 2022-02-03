@@ -30,7 +30,7 @@ namespace ApiSample.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim("sub","1"),
-                    new Claim("username","mert")
+                    new Claim(ClaimTypes.Name,"mert")
                 };
 
                 return Ok(await _tokenService.GenerateToken(claims));

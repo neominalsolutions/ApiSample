@@ -38,6 +38,12 @@ namespace MvcClient.Controllers
 
             //}
 
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+
+            }
+
+
            var request =  await apiSampleClient.GetAsync("api/products/v1");
 
             if (request.IsSuccessStatusCode) // eğer istek başarılı ise

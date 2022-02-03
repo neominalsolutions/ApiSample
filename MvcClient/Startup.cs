@@ -36,6 +36,19 @@ namespace MvcClient
                 // her istekde header eklenmesi gereken deðerler.
 
             });
+
+            services.AddAuthentication("ExternalAuth").AddCookie("ExternalAuth", opt =>
+            {
+               
+                opt.Cookie.Name = "ExternalCookie";
+                opt.Cookie.HttpOnly = false;
+                opt.LoginPath = "/Account/Login";
+                opt.LogoutPath = "/Account/Logout";
+                opt.ExpireTimeSpan = new TimeSpan(DateTime.UtcNow.AddSeconds(3600).Ticks);
+                opt.SlidingExpiration = true;
+                opt.AccessDeniedPath = "/Account/AccessDenied";
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,7 +68,7 @@ namespace MvcClient
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
