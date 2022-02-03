@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewData["Title"] = "GetAuthenticateInfo";
+}
+@using MvcClient.Models
+@model GetAuthenticationInfoViewModel
+
+<h1>GetAuthenticateInfo</h1>
+
+<h3>User Claims</h3>
+
+<table class="table table-responsive">
+
+    @foreach (var item in Model.UserClaims)
+    {
+        <tr>
+            <td>@item.Type : @item.Value</td>
+        </tr>
+    }
+
+    <tr>
+        <td>User : @Model.AuthenticatedUserName</td>
+    </tr>
+    <tr>
+        <td>User Id : @Model.AuthenticatedUserId</td>
+    </tr>
+</table>
+
+<h3>Auth Properties</h3>
+<table>
+    @foreach (var item in Model.AuthProperties)
+    {
+        <tr>
+            <td>@item.Key : @item.Value</td>
+        </tr>
+    }
+
+    @*<tr>
+        <td>Access Token : @Model.AccessToken</td>
+    </tr>
+    <tr>
+        <td>Refresh Token : @Model.RefreshToken</td>
+    </tr>*@
+</table>

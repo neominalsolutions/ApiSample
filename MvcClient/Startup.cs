@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MvcClient.Consts;
+using MvcClient.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,8 @@ namespace MvcClient
 
             });
 
+            services.AddScoped<IProductHttpClientService, ProductHttpClientService>();
+
             services.AddAuthentication("ExternalAuth").AddCookie("ExternalAuth", opt =>
             {
                
@@ -44,9 +47,10 @@ namespace MvcClient
                 opt.Cookie.HttpOnly = false;
                 opt.LoginPath = "/Account/Login";
                 opt.LogoutPath = "/Account/Logout";
-                opt.ExpireTimeSpan = new TimeSpan(DateTime.UtcNow.AddSeconds(3600).Ticks);
-                opt.SlidingExpiration = true;
+                //opt.ExpireTimeSpan = TimeSpan.FromSeconds(1900);
+                //opt.SlidingExpiration = true;
                 opt.AccessDeniedPath = "/Account/AccessDenied";
+    
 
             });
         }

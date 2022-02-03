@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcClient.Consts;
 using MvcClient.Models;
+using MvcClient.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,19 +18,33 @@ namespace MvcClient.Controllers
     public class HomeController : HttpClientController
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IProductHttpClientService _productClient;
+        private readonly HttpClientBaseService httpClientBaseService;
 
-        public HomeController(ILogger<HomeController> logger,IHttpClientFactory httpClientFactory):base(httpClientFactory)
+        public HomeController(ILogger<HomeController> logger,IHttpClientFactory httpClientFactory, IProductHttpClientService productHttpClientService) :base(httpClientFactory)
         {
             _logger = logger;
+            _productClient = productHttpClientService;
+         
         }
 
-        //private readonly HttpClient apiSampleClient;
+        [Authorize]
+        public async Task<ActionResult> GetAuthenticateInfo()
+        {
+            var result = await HttpContext.AuthenticateAsync();
 
-        //public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
-        //{
-        //    _logger = logger;
-        //    apiSampleClient = httpClientFactory.CreateClient(HttpClientNames.ApiSample);
-        //}
+            var model = new GetAuthenticationInfoViewModel
+            {
+                UserClaims = result.Principal.Claims,
+                //AccessToken = result.Properties.GetTokenValue("AccessToken"),
+                //RefreshToken = result.Properties.GetTokenValue("RefreshToken"),
+                AuthenticatedUserId = result.Principal.Claims.First(x=> x.Type == "sub").Value,
+                AuthenticatedUserName = HttpContext.User.Identity.Name,
+                AuthProperties = result.Properties.Items
+            };
+
+            return View(model);
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -38,10 +55,15 @@ namespace MvcClient.Controllers
 
             //}
 
-            if (HttpContext.User.Identity.IsAuthenticated)
-            {
 
-            }
+            //var authResult = await HttpContext.AuthenticateAsync();
+            //var accessToken = authResult.Properties.GetTokenValue("AccessToken");
+            //var refreshToken = authResult.Properties.GetTokenValue("RefreshToken");
+
+            //if (HttpContext.User.Identity.IsAuthenticated)
+            //{
+              
+            //}
 
 
            var request =  await apiSampleClient.GetAsync("api/products/v1");
@@ -61,6 +83,15 @@ namespace MvcClient.Controllers
 
 
             return View();
+        }
+
+        public async Task<IActionResult> Index2()
+        {
+       
+            // tüm http get ve http post istekleri için bu kullanılacaktır.
+            var response =  await _productClient.GetAsync<List<ProductViewModel>>(EndpointNames.ProductsV1);
+
+            return View(response);
         }
 
         public IActionResult Privacy()

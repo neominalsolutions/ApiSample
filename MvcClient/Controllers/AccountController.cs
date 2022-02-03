@@ -64,7 +64,9 @@ namespace MvcClient.Controllers
                 // burada token, token süresi, token kalıcı olup olmaycağı gibi bilgiler saklarnır.
                 var authProperties = new AuthenticationProperties();
                 authProperties.IsPersistent = model.RememberMe;
-                authProperties.ExpiresUtc = DateTime.UtcNow.AddSeconds(expireDateSeconds);
+                authProperties.ExpiresUtc = DateTimeOffset.FromUnixTimeSeconds(expireDateSeconds);
+
+
 
                 var accessToken = new AuthenticationToken();
                 accessToken.Name = "AccessToken";
@@ -86,19 +88,17 @@ namespace MvcClient.Controllers
  
                 await HttpContext.SignInAsync("ExternalAuth",claimPrinciple, authProperties);
 
-
-                // cookie oluşturma işlemleri yapmamız kullancıı HttpContext signIn yapmamız vs
-                // token Decode edip içindeki claim bilgilerini almamız vs lazım.
-
-                //var auth = await  HttpContext.AuthenticateAsync();
-                // auth.Properties.
-
-                // HttpContext.SignInAsync(,,)
+                return Redirect("/");
             }
 
-            return Redirect("/");
+
+            ViewBag.Message = "Kullanıcı Hesabı doğrulanamadı!";
+
+            return View();
 
 
         }
+
+
     }
 }
