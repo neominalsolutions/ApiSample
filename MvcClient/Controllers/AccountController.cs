@@ -50,6 +50,9 @@ namespace MvcClient.Controllers
 
                 var tokenResponse = JsonConvert.DeserializeObject<TokenViewModel>(content);
 
+
+                // Post işlemleri
+
                 var handler = new JwtSecurityTokenHandler();
                  var jwtToken =  handler.ReadJwtToken(tokenResponse.AccessToken);
 

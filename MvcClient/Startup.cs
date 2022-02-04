@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MvcClient.Consts;
-using MvcClient.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +37,6 @@ namespace MvcClient
 
             });
 
-            services.AddScoped<IProductHttpClientService, ProductHttpClientService>();
 
             services.AddAuthentication("ExternalAuth").AddCookie("ExternalAuth", opt =>
             {

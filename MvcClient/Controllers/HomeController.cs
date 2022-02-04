@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MvcClient.Consts;
+using MvcClient.Extensions;
 using MvcClient.Models;
-using MvcClient.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,13 +18,15 @@ namespace MvcClient.Controllers
     public class HomeController : HttpClientController
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IProductHttpClientService _productClient;
+        private readonly HttpClient _apiSampleClient;
 
-        public HomeController(ILogger<HomeController> logger,IHttpClientFactory httpClientFactory, IProductHttpClientService productHttpClientService) :base(httpClientFactory)
+
+        public HomeController(ILogger<HomeController> logger,IHttpClientFactory httpClientFactory) :base(httpClientFactory)
         {
             _logger = logger;
-            _productClient = productHttpClientService;
-         
+            _apiSampleClient = httpClientFactory.CreateClient(HttpClientNames.ApiSample);
+
+
         }
 
         [Authorize]
@@ -87,11 +89,13 @@ namespace MvcClient.Controllers
         public async Task<IActionResult> Index2()
         {
 
-            HttpClient client = new HttpClient();
+            
+        // common layer altında bu arkadaşı kullandığımızda her projede tek satırla istediğimiz formatta httpResponse dönüşü alırız.
+           var response =  await _apiSampleClient.GetAsync<List<ProductViewModel>>(EndpointNames.ProductsV1);
          
        
             // tüm http get ve http post istekleri için bu kullanılacaktır.
-            var response =  await _productClient.GetAsync<List<ProductViewModel>>(EndpointNames.ProductsV1);
+            //var response =  await _productClient.GetAsync<List<ProductViewModel>>(EndpointNames.ProductsV1);
 
             return View(response);
         }
