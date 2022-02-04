@@ -1,6 +1,11 @@
 ﻿using ApiSample.Dtos;
+using ApiSample.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Identity.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +17,14 @@ namespace ApiSample.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        readonly IAuthenticatedUserService userService;
+
+        public AuthController(IAuthenticatedUserService authenticatedUserService)
+        {
+            userService = authenticatedUserService;
+        }
+
+
         [HttpPost("client-credentials")]
         public IActionResult ValidateClientCredentials([FromHeader] ClientHeadersDto model)
         {
@@ -30,6 +43,37 @@ namespace ApiSample.Controllers
         {
             // http get işleminde eğer hassas bir bilgi taşımayacak isek get kullanarak da httpheader üzerinden veri okuyabiliriz.
             return Ok("x-secret");
+        }
+
+
+        [Authorize]
+        [HttpGet("test")]
+        public IActionResult TestAuth()
+        {
+
+            //userService.GetUser.Email;
+
+           return Ok();
+        }
+
+
+        [HttpPost("user-info")][Authorize]
+        public IActionResult GetProfile([FromBody] UserInfoParam userInfoParam)
+        {
+
+
+           return  Ok();
+
+            // access token üretildiği anda gelen token'a göre kimin authenticated olduğu httpcontext üzerindne öğrenebiliyoruz.
+           //string id =   HttpContext.User.Claims.First(x => x.Type == "sub").Value;
+
+            //return Ok(new CustomProfileDto()
+            //{
+            //    Email = "test@test.com",
+            //    Name = "test-user",
+            //    PhoneNumber = "4324324234",
+            //    Roles = new string[] { "admin", "manager" }
+            //});
         }
 
        

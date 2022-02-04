@@ -30,8 +30,11 @@ namespace ApiSample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<ITokenService, JwtTokenService>();
+            services.AddHttpContextAccessor();
 
+            services.AddTransient<ITokenService, JwtTokenService>();
+            // burasý çok önemli sakýn singleton yapmayalým.
+            services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
            
 
             //services.AddAuthentication("adminScheme").AddJwtBearer()

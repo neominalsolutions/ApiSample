@@ -39,7 +39,7 @@ namespace MvcClient.Controllers
                 UserClaims = result.Principal.Claims,
                 //AccessToken = result.Properties.GetTokenValue("AccessToken"),
                 //RefreshToken = result.Properties.GetTokenValue("RefreshToken"),
-                AuthenticatedUserId = result.Principal.Claims.First(x=> x.Type == "sub").Value,
+                AuthenticatedUserId = result.Principal.Claims.First(x=> x.Type == "id").Value,
                 AuthenticatedUserName = HttpContext.User.Identity.Name,
                 AuthProperties = result.Properties.Items
             };
@@ -98,6 +98,39 @@ namespace MvcClient.Controllers
             //var response =  await _productClient.GetAsync<List<ProductViewModel>>(EndpointNames.ProductsV1);
 
             return View(response);
+        }
+
+        /// <summary>
+        /// Sadece Authentica olduktan sonra Access Token ile istek yapmak için kullanıyoruz.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> AuthorizedApiAction()
+        {
+            var param = new ProductViewModel
+            {
+                Id = "1",
+                Name = "Kazak",
+                Price = 10,
+                Stock = 15
+            };
+
+
+            //var token = (await HttpContext.AuthenticateAsync()).Properties.GetTokenValue("AccessToken");
+
+            //_apiSampleClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            //var response = await _apiSampleClient.PostAsync<ProductViewModel, ProductViewModel>(EndpointNames.AuthorizedEndPoint, param);
+
+            // accesstoken olmalı yani login olmam gerekiyor.
+            var response = await _apiSampleClient.PostAsync<ProductViewModel, ProductViewModel>(EndpointNames.AuthorizedEndPoint, param, HttpContext);
+
+            if (response.IsSuccedeed)
+            {
+
+                return View();
+            }
+
+            return Unauthorized();
         }
 
         public IActionResult Privacy()

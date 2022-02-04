@@ -89,7 +89,7 @@ namespace ApiSample.Controllers
         }
 
         // 415 sunucuya istenilen formatta veri taşınmadı anlamına gelen status code 415 Unsupported Media Type
-        [HttpPost("create-v1")]
+        [HttpPost("create-v1")][Authorize]
         public IActionResult CreateProduct([FromBody] ProductDto model)
         {
             // [FromBody] attribute ile api ya gönderilen dosyayı application-json formatında alırız.
