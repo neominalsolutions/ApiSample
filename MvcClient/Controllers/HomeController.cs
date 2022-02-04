@@ -19,7 +19,6 @@ namespace MvcClient.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IProductHttpClientService _productClient;
-        private readonly HttpClientBaseService httpClientBaseService;
 
         public HomeController(ILogger<HomeController> logger,IHttpClientFactory httpClientFactory, IProductHttpClientService productHttpClientService) :base(httpClientFactory)
         {
@@ -87,6 +86,9 @@ namespace MvcClient.Controllers
 
         public async Task<IActionResult> Index2()
         {
+
+            HttpClient client = new HttpClient();
+         
        
             // tüm http get ve http post istekleri için bu kullanılacaktır.
             var response =  await _productClient.GetAsync<List<ProductViewModel>>(EndpointNames.ProductsV1);
