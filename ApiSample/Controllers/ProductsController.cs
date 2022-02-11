@@ -15,20 +15,40 @@ namespace ApiSample.Controllers
     //[Route("api/[controller]/[action]/{id?}")]
     [Route("api/[controller]")]
     [ApiController]
+
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     // Access Token ile kimlik doğrulamadan bu controller'a erişemeyiz. protected resource halinegelimiş oldu
     public class ProductsController : ControllerBase
     {
         [HttpGet("v2")]
         // attribute routing ile her bir route birbirinden ayırdık
-        public List<ProductDto> GetProducts2()
+        public IActionResult GetProducts2()
         {
-           // saveToken yapınca accessToken uygulama genelinde erişebiliyoruz. HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme);
+            // saveToken yapınca accessToken uygulama genelinde erişebiliyoruz. HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme);
 
-            return new List<ProductDto>();
+            var model = new List<ProductDto>
+            {
+               new ProductDto
+               {
+                   Id = Guid.NewGuid().ToString(),
+                   Name = "P-1",
+                   Price = 10,
+                   Stock = 20
+               },
+               new ProductDto
+               {
+                   Id = Guid.NewGuid().ToString(),
+                   Name = "P-2",
+                   Price = 13,
+                   Stock = 24
+               }
+            };
+
+
+            return Ok(model);
         }
 
-        [HttpGet("v1")]
+        [HttpGet("v1")][Authorize]
         public IActionResult GetProducts()
         {
             // actionları IActionResult tipinde genelde işaretleriz.

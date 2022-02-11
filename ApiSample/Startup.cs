@@ -35,7 +35,18 @@ namespace ApiSample
             services.AddTransient<ITokenService, JwtTokenService>();
             // burasý çok önemli sakýn singleton yapmayalým.
             services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
-           
+
+            services.AddCors(opt =>
+            {
+                opt.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyMethod(); // GET,POST apida açýk, HTTPDELETE, HTTPUT içinde açmýþ olduk; 415 hatasýda HttpMethod izni verilmemiþtir.
+                    policy.AllowAnyOrigin(); // Herhangi bir domaine istek atabiliriz.
+                    //policy.WithOrigins("www.a.com", "www.b.com");
+                    policy.AllowAnyHeader(); // Application/json appliation/xml
+                    //policy.WithHeaders("x-token"); // Application/json appliation/xml
+                });
+            });
 
             //services.AddAuthentication("adminScheme").AddJwtBearer()
 
@@ -64,6 +75,8 @@ namespace ApiSample
 
                 };
             });
+
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,6 +91,7 @@ namespace ApiSample
 
             app.UseHttpsRedirection();
 
+            app.UseCors(); // cors aç
             app.UseRouting();
             app.UseAuthentication(); // uygulama kimlik doðrulama uygulasýn
             app.UseAuthorization();
