@@ -32,7 +32,9 @@ namespace ApiSample.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim("id",model.UserName == "mert" ? "1":"2"),
-                    new Claim(ClaimTypes.Name,model.UserName)
+                    new Claim(ClaimTypes.Name,model.UserName),
+                    new Claim("username",model.UserName),
+                      new Claim("role","admin,manager")
                 };
 
                 var response = await _tokenService.GenerateToken(claims);
@@ -67,6 +69,10 @@ namespace ApiSample.Controllers
 
                     return Ok(response);
                 }
+
+
+
+        
 
 
                 return Unauthorized();
